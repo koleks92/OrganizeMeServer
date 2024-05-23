@@ -1,11 +1,11 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const cors = require('cors');
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const cors = require("cors");
 
 // Get environment variables
-require('dotenv').config()
-const databaseUrl = process.env.MONGO_URI
+require("dotenv").config();
+const databaseUrl = process.env.MONGO_URI;
 
 const app = express();
 
@@ -14,46 +14,62 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // MongoDB connection
-mongoose.connect(databaseUrl, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {
-  console.log('MongoDB connected');
-}).catch(err => {
-  console.error(err);
+mongoose
+    .connect(databaseUrl, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
+    .then(() => {
+        console.log("MongoDB connected");
+    })
+    .catch((err) => {
+        console.error(err);
+    });
+
+// Define a schema and model for task
+const TaskSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    type: {
+        type: String,
+        required: true,
+        enum: ["Do", "Buy", "Sell", "Check"]
+    },
+    shop: String,
+    extra: String,
+    completed: {
+      type: Boolean,
+      required: true},
 });
 
-// Define a simple schema and model
-const ItemSchema = new mongoose.Schema({
-  name: String,
-});
-
-const Item = mongoose.model('Item', ItemSchema);
+const Task = mongoose.model("Task", TaskSchema);
 
 // Routes
-app.get('/items', async (req, res) => {
-  try {
-    const items = await Item.find();
-    res.json(items);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+app.get("/items", async (req, res) => {
+    try {
+        const items = await Item.find();
+        res.json(items);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
-app.post('/items', async (req, res) => {
-  const newItem = new Item({
-    name: req.body.name,
-  });
-  try {
-    const savedItem = await newItem.save();
-    res.status(201).json(savedItem);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
+app.post("/items", async (req, res) => {
+    const newItem = new Item({
+        name: req.body.name,
+    });
+    try {
+        const savedItem = await newItem.save();
+        res.status(201).json(savedItem);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
 });
 
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
