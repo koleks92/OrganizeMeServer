@@ -35,7 +35,7 @@ const TaskSchema = new mongoose.Schema({
     type: {
         type: String,
         required: true,
-        enum: ["Do", "Buy", "Sell", "Check"]
+        enum: ["do", "buy", "sell", "check"]
     },
     shop: String,
     extra: String,
@@ -46,23 +46,31 @@ const TaskSchema = new mongoose.Schema({
 
 const Task = mongoose.model("Task", TaskSchema);
 
-// Routes
-app.get("/items", async (req, res) => {
+// Get all tasks
+app.get("/tasks", async (req, res) => {
     try {
-        const items = await Item.find();
-        res.json(items);
+        const tasks = await Task.find();
+        res.json(tasks);
     } catch (err) {
         res.status(500).json({ message: err.message });
+        res.json("Hello")
     }
 });
 
-app.post("/items", async (req, res) => {
-    const newItem = new Item({
+// Add new Task
+app.post("/newTask", async (req, res) => {
+  console.log(req.body.name);
+  console.log(req.body.type);
+    const newTask = new Task({
         name: req.body.name,
+        type: req.body.type,
+        completed: req.body.completed,
+        shop: req.body.shop,
+        extra: req.body.extra
     });
     try {
-        const savedItem = await newItem.save();
-        res.status(201).json(savedItem);
+        const savedTask = await newTask.save();
+        res.status(201).json(savedTask);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
