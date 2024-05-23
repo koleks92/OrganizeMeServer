@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
+// Get environment variables
+require('dotenv').config()
+const databaseUrl = process.env.MONGO_URI
+
 const app = express();
 
 // Middleware
@@ -10,7 +14,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // MongoDB connection
-mongoose.connect('mongodb://localhost:27017/mydatabase', {
+mongoose.connect(databaseUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {
