@@ -46,6 +46,17 @@ const TaskSchema = new mongoose.Schema({
 
 const Task = mongoose.model("Task", TaskSchema);
 
+// Get one task by id
+app.get("/tasks/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const task = await Task.findById(id);
+    res.status(200).json(task);
+  } catch (err) {
+    res.status(500).json({message: err.message});
+  }
+})
+
 // Get all not completed tasks
 app.get("/tasks", async (req, res) => {
     try {
@@ -84,6 +95,9 @@ app.post("/newTask", async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 });
+
+// Edit task
+
 
 // Start the server
 const PORT = process.env.PORT || 5000;
