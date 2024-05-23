@@ -55,6 +55,17 @@ app.get("/tasks/:id", async (req, res) => {
   } catch (err) {
     res.status(500).json({message: err.message});
   }
+});
+
+// Delete one task by id
+app.delete("/tasks/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const task = await Task.deleteOne({ _id: id});
+    res.status(200).json({ message: "Task deleted successfully"});
+  } catch (err) {
+    res.status(500).json({message: err.message});
+  }
 })
 
 // Get all not completed tasks
@@ -79,8 +90,6 @@ app.get("/history", async (req, res) => {
 
 // Add new Task
 app.post("/newTask", async (req, res) => {
-  console.log(req.body.name);
-  console.log(req.body.type);
     const newTask = new Task({
         name: req.body.name,
         type: req.body.type,
