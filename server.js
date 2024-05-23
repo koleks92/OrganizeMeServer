@@ -50,12 +50,21 @@ const Task = mongoose.model("Task", TaskSchema);
 app.get("/tasks", async (req, res) => {
     try {
         const tasks = await Task.find({ completed: false});
-        res.json(tasks);
+        res.status(200).json(tasks);
     } catch (err) {
         res.status(500).json({ message: err.message });
-        res.json("Hello")
     }
 });
+
+// Get all completed tasks(history)
+app.get("/history", async (req, res) => {
+  try {
+    const tasks = await Task.find({ completed: true});
+    res.status(200).json(tasks);
+  } catch (err) {
+    res.status(500).json({ message: err.message});
+  }
+}) 
 
 // Add new Task
 app.post("/newTask", async (req, res) => {
