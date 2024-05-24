@@ -62,7 +62,7 @@ app.get("/tasks/:id", async (req, res) => {
 app.delete("/tasks/:id", async (req, res) => {
     try {
         const id = req.params.id;
-        const task = await Task.deleteOne({ _id: id });
+        const task = await Task.findByIdAndDelete(id);
         res.status(200).json({ message: "Task deleted successfully" });
     } catch (err) {
         res.status(500).json({ message: err.message });
