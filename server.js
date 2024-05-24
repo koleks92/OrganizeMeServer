@@ -128,6 +128,29 @@ app.put("/tasks/:id", async (req, res) => {
     }
 });
 
+// Mark as completed/uncompleted
+app.put("/tasks/:id/completed", async (req, res) => {
+  try {
+    const id = req.params.id;
+    let completed = req.params.completed;
+    
+    if (completed === true) {
+      completed = false;  
+    } else {
+      completed = true;
+    };
+
+    const options = { new: true }; // To return new object
+
+    const task = await Task.findByIdAndUpdate(id, {
+      completed: completed
+    }, options)
+    res.status(200).json(task);
+  } catch (err) {
+    res.status(500).json({message: err.message});
+  }
+})
+
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
