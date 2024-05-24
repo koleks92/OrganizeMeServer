@@ -35,43 +35,44 @@ const TaskSchema = new mongoose.Schema({
     type: {
         type: String,
         required: true,
-        enum: ["do", "buy", "sell", "check"]
+        enum: ["do", "buy", "sell", "check"],
     },
     shop: String,
     extra: String,
     completed: {
-      type: Boolean,
-      required: true},
+        type: Boolean,
+        required: true,
+    },
 });
 
 const Task = mongoose.model("Task", TaskSchema);
 
 // Get one task by id
 app.get("/tasks/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
-    const task = await Task.findById(id);
-    res.status(200).json(task);
-  } catch (err) {
-    res.status(500).json({message: err.message});
-  }
+    try {
+        const id = req.params.id;
+        const task = await Task.findById(id);
+        res.status(200).json(task);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
 });
 
 // Delete one task by id
 app.delete("/tasks/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
-    const task = await Task.deleteOne({ _id: id});
-    res.status(200).json({ message: "Task deleted successfully"});
-  } catch (err) {
-    res.status(500).json({message: err.message});
-  }
-})
+    try {
+        const id = req.params.id;
+        const task = await Task.deleteOne({ _id: id });
+        res.status(200).json({ message: "Task deleted successfully" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
 
 // Get all not completed tasks
 app.get("/tasks", async (req, res) => {
     try {
-        const tasks = await Task.find({ completed: false});
+        const tasks = await Task.find({ completed: false });
         res.status(200).json(tasks);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -80,22 +81,22 @@ app.get("/tasks", async (req, res) => {
 
 // Get all completed tasks(history)
 app.get("/history", async (req, res) => {
-  try {
-    const tasks = await Task.find({ completed: true});
-    res.status(200).json(tasks);
-  } catch (err) {
-    res.status(500).json({ message: err.message});
-  }
-}) 
+    try {
+        const tasks = await Task.find({ completed: true });
+        res.status(200).json(tasks);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
 
 // Add new Task
-app.post("/newTask", async (req, res) => {
+app.post("/tasks", async (req, res) => {
     const newTask = new Task({
         name: req.body.name,
         type: req.body.type,
         completed: req.body.completed,
         shop: req.body.shop,
-        extra: req.body.extra
+        extra: req.body.extra,
     });
     try {
         const savedTask = await newTask.save();
@@ -106,7 +107,26 @@ app.post("/newTask", async (req, res) => {
 });
 
 // Edit task
-
+app.put("/tasks/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const updatedName = req.body.name;
+        const updatedType = req.body.type;
+        const updatedShop = req.body.shop;
+        const updatedExtra = req.body.extra;
+        const options = { new: true }; // To return new document
+        const task = await Task.findByIdAndUpdate(id, {
+            name: updatedName,
+            type: updatedType,
+            shop: updatedShop,
+            extra: updatedExtra,
+            completed: false,
+        });
+        res.status(200).json(task);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
 
 // Start the server
 const PORT = process.env.PORT || 5000;
