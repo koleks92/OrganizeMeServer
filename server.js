@@ -132,13 +132,7 @@ app.put("/tasks/:id", async (req, res) => {
 app.put("/tasks/:id/completed", async (req, res) => {
   try {
     const id = req.params.id;
-    let completed = req.params.completed;
-    
-    if (completed === true) {
-      completed = false;  
-    } else {
-      completed = true;
-    };
+    const completed = req.body.completed;
 
     const options = { new: true }; // To return new object
 
